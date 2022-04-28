@@ -1,5 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.HttpLogging;
+using WatsonSync.Components;
+using WatsonSync.Middlewares;
 
 namespace WatsonSync;
 
@@ -7,6 +9,8 @@ public sealed class Startup
 {
     public static void ConfigureServices(IServiceCollection services) =>
         services
+            .AddScoped<UserAuthenticator>()
+            .AddSingleton<IUserRepository, SqliteUserRepository>()
             .AddHttpLogging(options =>
             {
                 options.LoggingFields = HttpLoggingFields.All;
@@ -27,6 +31,7 @@ public sealed class Startup
         loggerFactory.AddLog4Net();
         
         app.UseRouting();
+        app.UseMiddleware<TokenAuthenticationMiddleware>();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

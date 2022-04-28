@@ -10,7 +10,7 @@ public sealed class FramesController : Controller
     private static readonly ILog Logger = LogManager.GetLogger(typeof(FramesController));
     
     [HttpGet]
-    public IActionResult Frames()
+    public IActionResult Frames([FromQuery(Name = "last_sync")] DateTime since)
     {
         Logger.Info("Query Frames");
 

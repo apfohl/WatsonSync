@@ -11,7 +11,7 @@ public class SqliteFrameRepository : IFrameRepository
     {
         using var unitOfWork = await UnitOfWork.Create($"Data Source={databasePath}; Pooling=false");
 
-        var frames = await unitOfWork.Query<Frame>("SELECT * FROM frames");
+        var frames = await unitOfWork.Query<Frame>("SELECT id AS Id, start_at AS StartAt, end_at AS EndAt, project AS Project FROM frames");
 
         await unitOfWork.Commit();
 
@@ -22,7 +22,7 @@ public class SqliteFrameRepository : IFrameRepository
     {
         using var unitOfWork = await UnitOfWork.Create($"Data Source={databasePath}; Pooling=false");
 
-        var frames = await unitOfWork.Query<Frame>("SELECT * FROM frames WHERE end_at > @Since", new { Since = since });
+        var frames = await unitOfWork.Query<Frame>("SELECT id AS Id, start_at AS StartAt, end_at AS EndAt, project AS Project FROM frames WHERE end_at > @Since", new { Since = since });
 
         await unitOfWork.Commit();
 

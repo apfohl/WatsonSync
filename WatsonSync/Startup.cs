@@ -10,10 +10,10 @@ public sealed class Startup
 {
     public static void ConfigureServices(IServiceCollection services)
     {
-        SqlMapper.AddTypeHandler(new SqliteGuidTypeHandler());
-        SqlMapper.RemoveTypeMap(typeof(Guid));
-        SqlMapper.RemoveTypeMap(typeof(Guid?));
-        
+        SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
+        SqlMapper.AddTypeHandler(new GuidHandler());
+        SqlMapper.AddTypeHandler(new TimeSpanHandler());
+
         services
             .AddScoped<UserAuthenticator>()
             .AddScoped<IUserRepository, SqliteUserRepository>()

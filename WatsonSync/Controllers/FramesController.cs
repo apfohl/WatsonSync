@@ -17,16 +17,16 @@ public sealed class FramesController : Controller
         this.frameRepository = frameRepository;
 
     [HttpGet]
-    public IActionResult Frames([FromQuery(Name = "last_sync")] DateTime since) =>
+    public async Task<IActionResult> Frames([FromQuery(Name = "last_sync")] DateTime since) =>
         Ok(since == default
-            ? frameRepository.QueryAll(CurrentUser)
-            : frameRepository.QuerySince(CurrentUser, since));
+            ? await frameRepository.QueryAll(CurrentUser)
+            : await frameRepository.QuerySince(CurrentUser, since));
 
     [HttpPost]
     [Route("bulk")]
-    public IActionResult CreateFrames([FromBody] IEnumerable<Frame> frames)
+    public async Task<IActionResult> CreateFrames([FromBody] IEnumerable<Frame> frames)
     {
-        frameRepository.Insert(CurrentUser, frames);
+        await frameRepository.Insert(CurrentUser, frames);
         return CreatedAtAction(nameof(Frames), null);
     }
 }

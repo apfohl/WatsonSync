@@ -4,17 +4,42 @@ namespace WatsonSync.Components;
 
 public class SqliteFrameRepository : IFrameRepository
 {
-    public IEnumerable<Frame> QueryAll(User user)
+    private readonly string databasePath =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "watson-sync.sqlite");
+
+    public async Task<IEnumerable<Frame>> QueryAll(User user)
     {
-        return Enumerable.Empty<Frame>();
+        using var unitOfWork = await UnitOfWork.Create($"Data Source={databasePath}; Pooling=false");
+
+        var frames = await unitOfWork.Query<Frame>("SELECT * FROM frames");
+
+        await unitOfWork.Commit();
+
+        return frames;
     }
 
-    public IEnumerable<Frame> QuerySince(User user, DateTime since)
+    public async Task<IEnumerable<Frame>> QuerySince(User user, DateTime since)
     {
-        return Enumerable.Empty<Frame>();
+        using var unitOfWork = await UnitOfWork.Create($"Data Source={databasePath}; Pooling=false");
+
+        var frames = await unitOfWork.Query<Frame>("SELECT * FROM frames WHERE end_at > @Since", new { Since = since });
+
+        await unitOfWork.Commit();
+
+        return frames;
     }
 
-    public void Insert(User user, IEnumerable<Frame> frames)
+    public async Task Insert(User user, IEnumerable<Frame> frames)
     {
+        using var unitOfWork = await UnitOfWork.Create($"Data Source={databasePath}; Pooling=false");
+
+        foreach (var frame in frames)
+        {
+            await unitOfWork.Execute(
+                "INSERT INTO frames (id, start_at, end_at, project) values (@Id, @StartAt, @EndAt, @Project)",
+                frame);
+        }
+
+        await unitOfWork.Commit();
     }
 }

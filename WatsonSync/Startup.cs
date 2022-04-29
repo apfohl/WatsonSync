@@ -1,3 +1,4 @@
+using Dapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.HttpLogging;
 using WatsonSync.Components;
@@ -7,7 +8,12 @@ namespace WatsonSync;
 
 public sealed class Startup
 {
-    public static void ConfigureServices(IServiceCollection services) =>
+    public static void ConfigureServices(IServiceCollection services)
+    {
+        SqlMapper.AddTypeHandler(new SqliteGuidTypeHandler());
+        SqlMapper.RemoveTypeMap(typeof(Guid));
+        SqlMapper.RemoveTypeMap(typeof(Guid?));
+        
         services
             .AddScoped<UserAuthenticator>()
             .AddScoped<IUserRepository, SqliteUserRepository>()
@@ -19,7 +25,8 @@ public sealed class Startup
                 options.ResponseBodyLogLimit = 4096;
             })
             .AddControllers();
-    
+    }
+
     [UsedImplicitly]
     public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
     {

@@ -8,6 +8,7 @@ namespace WatsonSync.Controllers;
 
 using static Functional;
 
+[Authorize]
 [Route("users")]
 public sealed class UsersController : Controller
 {
@@ -16,6 +17,7 @@ public sealed class UsersController : Controller
     public UsersController(IUserRepository userRepository) =>
         this.userRepository = userRepository;
 
+    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] NewUserRequest newUserRequest) =>
         (from emailAddress in ValidateEmailAddress(newUserRequest.Email)

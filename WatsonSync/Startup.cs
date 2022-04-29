@@ -10,7 +10,8 @@ public sealed class Startup
     public static void ConfigureServices(IServiceCollection services) =>
         services
             .AddScoped<UserAuthenticator>()
-            .AddSingleton<IUserRepository, SqliteUserRepository>()
+            .AddScoped<IUserRepository, SqliteUserRepository>()
+            .AddScoped<IFrameRepository, SqliteFrameRepository>()
             .AddHttpLogging(options =>
             {
                 options.LoggingFields = HttpLoggingFields.All;

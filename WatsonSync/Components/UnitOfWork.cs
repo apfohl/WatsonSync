@@ -1,41 +1,40 @@
-using System.Data;
-using System.Data.Common;
-using Dapper;
-using Microsoft.Data.Sqlite;
+using MonadicBits;
+using WatsonSync.Models;
 
 namespace WatsonSync.Components;
 
 public sealed class UnitOfWork : IDisposable
 {
-    private readonly SqliteConnection connection;
-    private readonly DbTransaction transaction;
+    private readonly Context context;
+    private Maybe<IUserRepository> userRepository;
+    private Maybe<IFrameRepository> frameRepository;
 
-    private UnitOfWork(SqliteConnection connection, DbTransaction transaction)
-    {
-        this.connection = connection;
-        this.transaction = transaction;
-    }
+    public IUserRepository UserRepository =>
+        userRepository.Match(
+            repository => repository,
+            () =>
+            {
+                var repository = new SqliteUserRepository(context);
+                userRepository = repository.Just<IUserRepository>();
+                return repository;
+            });
 
-    public Task<IEnumerable<T>> Query<T>(string query, object parameter = null) =>
-        connection.QueryAsync<T>(query, parameter, transaction);
+    public IFrameRepository FrameRepository =>
+        frameRepository.Match(
+            repository => repository,
+            () =>
+            {
+                var repository = new SqliteFrameRepository(context);
+                frameRepository = repository.Just<IFrameRepository>();
+                return repository;
+            });
 
-    public Task<int> Execute(string query, object parameter = null) =>
-        connection.ExecuteAsync(query, parameter, transaction);
+    public UnitOfWork(IContextFactory contextFactory) =>
+        context = contextFactory.Create();
 
-    public Task Commit() => transaction.CommitAsync();
-    
-    public void Dispose()
-    {
-        transaction.Dispose();
-        connection.Dispose();
-    }
+    public Task Save() =>
+        context.Commit();
 
-    public static async Task<UnitOfWork> Create(string connectionString)
-    {
-        var connection = new SqliteConnection(connectionString);
-        await connection.OpenAsync();
-        var transaction = await connection.BeginTransactionAsync(IsolationLevel.RepeatableRead);
-
-        return new UnitOfWork(connection, transaction);
-    }
+    public void Dispose() =>
+        context.Dispose();
 }

@@ -3,13 +3,20 @@ using WatsonSync.Models;
 
 namespace WatsonSync.Components;
 
-public sealed class UserAuthenticator
+public sealed class UserAuthenticator : IDisposable
 {
-    private readonly IUserRepository userRepository;
+    private readonly UnitOfWork unitOfWork;
 
-    public UserAuthenticator(IUserRepository userRepository) =>
-        this.userRepository = userRepository;
+    public UserAuthenticator(IContextFactory contextFactory) =>
+        unitOfWork = new UnitOfWork(contextFactory);
 
-    public Maybe<User> Authenticate(string token) =>
-        userRepository.FindByToken(token);
+    public async Task<Maybe<User>> Authenticate(string token)
+    {
+        var user = await unitOfWork.UserRepository.FindByToken(token);
+        await unitOfWork.Save();
+        return user;
+    }
+
+    public void Dispose() => 
+        unitOfWork.Dispose();
 }

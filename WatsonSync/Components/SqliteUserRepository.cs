@@ -5,9 +5,16 @@ namespace WatsonSync.Components;
 
 public sealed class SqliteUserRepository : IUserRepository
 {
-    public Maybe<User> FindByToken(string token) =>
-        new User(1, token);
+    private readonly Context context;
 
-    public Maybe<User> Create(string email) =>
-        new User(42, Guid.NewGuid().ToString());
+    public SqliteUserRepository(Context context) =>
+        this.context = context;
+
+    public Task<Maybe<User>> FindByToken(string token) =>
+        Task.FromResult(new User(1, "mail@example.com", token).Just());
+
+    public Task<Maybe<User>> Create(string email)
+    {
+        throw new NotImplementedException();
+    }
 }

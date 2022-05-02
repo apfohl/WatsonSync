@@ -1,3 +1,3 @@
 namespace WatsonSync.Models;
 
-public sealed record User(int Id, string Token);
+public sealed record User(int Id, string Email, string Token);

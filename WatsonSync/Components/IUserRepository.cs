@@ -5,6 +5,6 @@ namespace WatsonSync.Components;
 
 public interface IUserRepository
 {
-    Maybe<User> FindByToken(string token);
-    Maybe<User> Create(string email);
+    Task<Maybe<User>> FindByToken(string token);
+    Task<Maybe<User>> Create(string email);
 }

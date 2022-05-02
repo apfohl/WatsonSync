@@ -8,7 +8,7 @@ namespace WatsonSync.Controllers;
 
 using static Functional;
 
-[Authorize]
+// [Authorize]
 [Route("users")]
 public sealed class UsersController : Controller
 {
@@ -17,7 +17,7 @@ public sealed class UsersController : Controller
     public UsersController(IContextFactory contextFactory) =>
         unitOfWork = new UnitOfWork(contextFactory);
 
-    [AllowAnonymous]
+    // [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] NewUserRequest newUserRequest)
     {

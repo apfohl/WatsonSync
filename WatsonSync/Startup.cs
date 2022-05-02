@@ -41,7 +41,7 @@ public sealed class Startup
         loggerFactory.AddLog4Net();
 
         app.UseRouting();
-        app.UseMiddleware<TokenAuthenticationMiddleware>();
+        // app.UseMiddleware<TokenAuthenticationMiddleware>();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

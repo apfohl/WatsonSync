@@ -15,8 +15,9 @@ public sealed class Context : IDisposable
         this.transaction = transaction;
     }
 
-    public Task<IEnumerable<T>> Query<T>(string query, object parameter = null) =>
-        connection.QueryAsync<T>(query, parameter, transaction);
+    public Task<IEnumerable<T>> Query<T>(string query, Type[] types, Func<object[], T> map, string splitOn,
+        object parameter = null) =>
+        connection.QueryAsync(query, types, map, parameter, transaction, splitOn: splitOn);
 
     public Task<int> Execute(string query, object parameter = null) =>
         connection.ExecuteAsync(query, parameter, transaction);
@@ -26,7 +27,7 @@ public sealed class Context : IDisposable
 
     public Task Commit() =>
         transaction.CommitAsync();
-    
+
     public void Dispose()
     {
         transaction.Dispose();

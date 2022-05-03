@@ -1,8 +1,9 @@
+using WatsonSync.Components.DataAccess;
 using WatsonSync.Models;
 
 namespace WatsonSync.Components.Repositories;
 
-public class SqliteFrameRepository : IFrameRepository
+public sealed class SqliteFrameRepository : IFrameRepository
 {
     private readonly Context context;
 

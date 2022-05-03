@@ -1,6 +1,5 @@
 using System.Data;
 using Microsoft.Data.Sqlite;
-using WatsonSync.Models;
 
 namespace WatsonSync.Components.DataAccess;
 

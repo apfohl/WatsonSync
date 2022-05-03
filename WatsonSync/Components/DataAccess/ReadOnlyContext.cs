@@ -1,7 +1,7 @@
 using Dapper;
 using Microsoft.Data.Sqlite;
 
-namespace WatsonSync.Models;
+namespace WatsonSync.Components.DataAccess;
 
 public sealed class ReadOnlyContext : IDisposable
 {

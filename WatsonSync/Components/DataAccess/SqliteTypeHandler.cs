@@ -1,9 +1,9 @@
 using System.Data;
-using Dapper;
+using static Dapper.SqlMapper;
 
 namespace WatsonSync.Components.DataAccess;
 
-public abstract class SqliteTypeHandler<T> : SqlMapper.TypeHandler<T>
+public abstract class SqliteTypeHandler<T> : TypeHandler<T>
 {
     public override void SetValue(IDbDataParameter parameter, T value)
         => parameter.Value = value;

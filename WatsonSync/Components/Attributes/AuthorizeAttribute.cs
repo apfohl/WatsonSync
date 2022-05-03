@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using WatsonSync.Components.Extensions;
 using WatsonSync.Models;
 
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter

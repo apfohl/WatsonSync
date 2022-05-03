@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Primitives;
 using MonadicBits;
 
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.Extensions;
 
 using static Functional;
 

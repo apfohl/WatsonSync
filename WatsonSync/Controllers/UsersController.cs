@@ -1,26 +1,30 @@
 using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using MonadicBits;
-using WatsonSync.Components;
+using WatsonSync.Components.Attributes;
+using WatsonSync.Components.DataAccess;
+using WatsonSync.Components.Extensions;
 using WatsonSync.Models;
 
 namespace WatsonSync.Controllers;
 
 using static Functional;
 
-// [Authorize]
+[Authorize]
 [Route("users")]
 public sealed class UsersController : Controller
 {
-    private readonly UnitOfWork unitOfWork;
+    private readonly IDatabase database;
 
-    public UsersController(IContextFactory contextFactory) =>
-        unitOfWork = new UnitOfWork(contextFactory);
+    public UsersController(IDatabase database) =>
+        this.database = database;
 
-    // [AllowAnonymous]
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] NewUserRequest newUserRequest)
     {
+        using var unitOfWork = database.StartUnitOfWork();
+
         var result = await (
             from emailAddress in ValidateEmailAddress(newUserRequest.Email).AsTask()
             from user in unitOfWork.UserRepository.Create(emailAddress)
@@ -31,12 +35,6 @@ public sealed class UsersController : Controller
         return result.Match<IActionResult>(
             response => Created(string.Empty, response),
             () => StatusCode(500));
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        unitOfWork.Dispose();
-        base.Dispose(disposing);
     }
 
     private static Maybe<string> ValidateEmailAddress(string emailAddress) =>

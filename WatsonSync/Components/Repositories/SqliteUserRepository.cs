@@ -3,7 +3,7 @@ using System.Text;
 using MonadicBits;
 using WatsonSync.Models;
 
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.Repositories;
 
 public sealed class SqliteUserRepository : IUserRepository
 {
@@ -11,9 +11,6 @@ public sealed class SqliteUserRepository : IUserRepository
 
     public SqliteUserRepository(Context context) =>
         this.context = context;
-
-    public Task<Maybe<User>> FindByToken(string token) =>
-        Task.FromResult(new User(1, "mail@example.com", token).Just());
 
     public async Task<Maybe<User>> Create(string email)
     {

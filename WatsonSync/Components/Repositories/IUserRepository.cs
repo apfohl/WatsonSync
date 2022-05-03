@@ -1,10 +1,9 @@
 using MonadicBits;
 using WatsonSync.Models;
 
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.Repositories;
 
 public interface IUserRepository
 {
-    Task<Maybe<User>> FindByToken(string token);
     Task<Maybe<User>> Create(string email);
 }

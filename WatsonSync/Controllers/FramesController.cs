@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using WatsonSync.Components;
+using WatsonSync.Components.Attributes;
+using WatsonSync.Components.DataAccess;
 using WatsonSync.Models;
 
 namespace WatsonSync.Controllers;
@@ -8,17 +9,19 @@ namespace WatsonSync.Controllers;
 [Route("frames")]
 public sealed class FramesController : Controller
 {
-    private readonly UnitOfWork unitOfWork;
+    private readonly IDatabase database;
     // private static readonly ILog Logger = LogManager.GetLogger(typeof(FramesController));
 
-    public FramesController(IContextFactory contextFactory) =>
-        unitOfWork = new UnitOfWork(contextFactory);
+    public FramesController(IDatabase database) => 
+        this.database = database;
 
     private User CurrentUser => (User)HttpContext.Items["User"];
 
     [HttpGet]
     public async Task<IActionResult> Frames([FromQuery(Name = "last_sync")] DateTime since)
     {
+        using var unitOfWork = database.StartUnitOfWork();
+        
         var result = since == default
             ? await unitOfWork.FrameRepository.QueryAll(CurrentUser)
             : await unitOfWork.FrameRepository.QuerySince(CurrentUser, since);
@@ -32,16 +35,12 @@ public sealed class FramesController : Controller
     [Route("bulk")]
     public async Task<IActionResult> CreateFrames([FromBody] IEnumerable<Frame> frames)
     {
+        using var unitOfWork = database.StartUnitOfWork();
+        
         await unitOfWork.FrameRepository.Insert(CurrentUser, frames);
         
         await unitOfWork.Save();
         
         return CreatedAtAction(nameof(Frames), null);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        unitOfWork.Dispose();
-        base.Dispose(disposing);
     }
 }

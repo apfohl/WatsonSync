@@ -2,7 +2,7 @@ using System.Data;
 using Microsoft.Data.Sqlite;
 using WatsonSync.Models;
 
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.DataAccess;
 
 public sealed class SqliteContextFactory : IContextFactory
 {
@@ -18,5 +18,13 @@ public sealed class SqliteContextFactory : IContextFactory
         var transaction = connection.BeginTransaction(IsolationLevel.RepeatableRead);
 
         return new Context(connection, transaction);
+    }
+
+    public ReadOnlyContext CreateReadOnly()
+    {
+        var connection = new SqliteConnection(connectionString);
+        connection.Open();
+        
+        return new ReadOnlyContext(connection);
     }
 }

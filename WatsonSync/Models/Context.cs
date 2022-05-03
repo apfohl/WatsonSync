@@ -30,6 +30,7 @@ public sealed class Context : IDisposable
     public void Dispose()
     {
         transaction.Dispose();
+        connection.Close();
         connection.Dispose();
     }
 }

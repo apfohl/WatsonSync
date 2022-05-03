@@ -1,4 +1,4 @@
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.Extensions;
 
 public static class AsyncExtensions
 {

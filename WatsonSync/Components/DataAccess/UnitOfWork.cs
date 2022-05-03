@@ -1,7 +1,8 @@
 using MonadicBits;
+using WatsonSync.Components.Repositories;
 using WatsonSync.Models;
 
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.DataAccess;
 
 public sealed class UnitOfWork : IDisposable
 {

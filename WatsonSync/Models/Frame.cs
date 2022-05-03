@@ -14,8 +14,10 @@ public sealed record Frame
         Tags = tags;
     }
 
-    public Frame() {}
-    
+    public Frame()
+    {
+    }
+
     [JsonConverter(typeof(FrameGuidConverter))]
     public Guid Id { get; set; }
 
@@ -24,14 +26,4 @@ public sealed record Frame
     [JsonPropertyName("end_at")] public DateTime EndAt { get; set; }
     public string Project { get; set; }
     public IEnumerable<string> Tags { get; set; }
-
-    public void Deconstruct(out Guid id, out DateTime startAt, out DateTime endAt, out string project,
-        out IEnumerable<string> tags)
-    {
-        id = Id;
-        startAt = StartAt;
-        endAt = EndAt;
-        project = Project;
-        tags = Tags;
-    }
 }

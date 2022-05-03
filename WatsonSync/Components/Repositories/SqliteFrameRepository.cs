@@ -1,6 +1,6 @@
 using WatsonSync.Models;
 
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.Repositories;
 
 public class SqliteFrameRepository : IFrameRepository
 {

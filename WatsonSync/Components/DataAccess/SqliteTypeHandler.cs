@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-namespace WatsonSync.Components;
+namespace WatsonSync.Components.DataAccess;
 
 public abstract class SqliteTypeHandler<T> : SqlMapper.TypeHandler<T>
 {

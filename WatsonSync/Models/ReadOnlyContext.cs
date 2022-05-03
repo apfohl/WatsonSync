@@ -10,9 +10,9 @@ public sealed class ReadOnlyContext : IDisposable
     public ReadOnlyContext(SqliteConnection connection) =>
         this.connection = connection;
 
-    public Task<T> QuerySingle<T>(string query, object parameter = null) =>
-        connection.QuerySingleAsync<T>(query, parameter);
-    
+    public Task<T> QuerySingleOrDefault<T>(string query, object parameter = null) =>
+        connection.QuerySingleOrDefaultAsync<T>(query, parameter);
+
     public void Dispose()
     {
         connection.Close();

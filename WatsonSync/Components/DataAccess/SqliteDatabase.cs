@@ -18,7 +18,7 @@ public sealed class SqliteDatabase : IDatabase
     {
         using var context = contextFactory.CreateReadOnly();
 
-        var user = await context.QuerySingle<User>(
+        var user = await context.QuerySingleOrDefault<User>(
             "SELECT id AS Id, email AS Email, token AS Token FROM users WHERE token IS @Token",
             new { Token = token });
 

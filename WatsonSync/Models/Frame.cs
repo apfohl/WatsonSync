@@ -5,10 +5,10 @@ namespace WatsonSync.Models;
 
 public sealed record Frame
 {
-    public Frame(Guid id, DateTime startAt, DateTime endAt, string project, IEnumerable<string> tags)
+    public Frame(Guid id, DateTime beginAt, DateTime endAt, string project, IEnumerable<string> tags)
     {
         Id = id;
-        StartAt = startAt;
+        BeginAt = beginAt;
         EndAt = endAt;
         Project = project;
         Tags = tags;
@@ -21,7 +21,7 @@ public sealed record Frame
     [JsonConverter(typeof(FrameGuidConverter))]
     public Guid Id { get; set; }
 
-    [JsonPropertyName("start_at")] public DateTime StartAt { get; set; }
+    [JsonPropertyName("begin_at")] public DateTime BeginAt { get; set; }
 
     [JsonPropertyName("end_at")] public DateTime EndAt { get; set; }
     public string Project { get; set; }

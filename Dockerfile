@@ -13,4 +13,6 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine-amd64
 WORKDIR /app
 COPY --from=build /app ./
 
+EXPOSE 80
+
 ENTRYPOINT ["./WatsonSync"]

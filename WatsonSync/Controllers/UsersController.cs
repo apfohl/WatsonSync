@@ -12,7 +12,7 @@ using static Functional;
 
 [Authorize]
 [Route("users")]
-public sealed class UsersController : Controller
+public sealed class UsersController : BaseController
 {
     private readonly IDatabase database;
 
@@ -35,6 +35,18 @@ public sealed class UsersController : Controller
         return result.Match<IActionResult>(
             response => Created(string.Empty, response),
             () => StatusCode(500));
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete()
+    {
+        using var unitOfWork = database.StartUnitOfWork();
+
+        await unitOfWork.Users.Delete(CurrentUser);
+
+        await unitOfWork.Save();
+
+        return Ok();
     }
 
     private static Maybe<string> ValidateEmailAddress(string emailAddress) =>

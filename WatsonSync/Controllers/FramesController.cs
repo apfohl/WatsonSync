@@ -7,15 +7,13 @@ namespace WatsonSync.Controllers;
 
 [Authorize]
 [Route("frames")]
-public sealed class FramesController : Controller
+public sealed class FramesController : BaseController
 {
     private readonly IDatabase database;
     // private static readonly ILog Logger = LogManager.GetLogger(typeof(FramesController));
 
     public FramesController(IDatabase database) => 
         this.database = database;
-
-    private User CurrentUser => (User)HttpContext.Items["User"];
 
     [HttpGet]
     public async Task<IActionResult> Frames([FromQuery(Name = "last_sync")] DateTime since)

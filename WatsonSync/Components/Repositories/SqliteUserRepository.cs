@@ -25,10 +25,12 @@ public sealed class SqliteUserRepository : IUserRepository
         return new User(nextId, email, token);
     }
 
+    public Task Delete(User user) =>
+        context.Execute("DELETE FROM users WHERE id IS @Id", user);
+
     private async Task<int?> LastId() =>
         await context.QuerySingle<int?>("SELECT max(id) FROM users");
 
     private static string CreateToken() =>
         Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
-
 }

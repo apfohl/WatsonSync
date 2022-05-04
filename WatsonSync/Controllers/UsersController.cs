@@ -27,7 +27,7 @@ public sealed class UsersController : Controller
 
         var result = await (
             from emailAddress in ValidateEmailAddress(newUserRequest.Email).AsTask()
-            from user in unitOfWork.UserRepository.Create(emailAddress)
+            from user in unitOfWork.Users.Create(emailAddress)
             select new NewUserResponse(user.Token));
 
         await unitOfWork.Save();

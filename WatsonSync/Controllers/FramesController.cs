@@ -23,8 +23,8 @@ public sealed class FramesController : Controller
         using var unitOfWork = database.StartUnitOfWork();
         
         var result = since == default
-            ? await unitOfWork.FrameRepository.QueryAll(CurrentUser)
-            : await unitOfWork.FrameRepository.QuerySince(CurrentUser, since);
+            ? await unitOfWork.Frames.QueryAll(CurrentUser)
+            : await unitOfWork.Frames.QuerySince(CurrentUser, since);
         
         await unitOfWork.Save();
 
@@ -37,7 +37,7 @@ public sealed class FramesController : Controller
     {
         using var unitOfWork = database.StartUnitOfWork();
         
-        await unitOfWork.FrameRepository.Insert(CurrentUser, frames);
+        await unitOfWork.Frames.Insert(CurrentUser, frames);
         
         await unitOfWork.Save();
         

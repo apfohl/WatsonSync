@@ -6,31 +6,21 @@ namespace WatsonSync.Components.DataAccess;
 public sealed class UnitOfWork : IDisposable
 {
     private readonly Context context;
-    private Maybe<IUserRepository> userRepository;
-    private Maybe<IFrameRepository> frameRepository;
+    private readonly Lazy<IUserRepository> userRepository;
+    private readonly Lazy<IFrameRepository> frameRepository;
 
-    public IUserRepository UserRepository =>
-        userRepository.Match(
-            repository => repository,
-            () =>
-            {
-                var repository = new SqliteUserRepository(context);
-                userRepository = repository.Just<IUserRepository>();
-                return repository;
-            });
+    public IUserRepository Users =>
+        userRepository.Value;
 
-    public IFrameRepository FrameRepository =>
-        frameRepository.Match(
-            repository => repository,
-            () =>
-            {
-                var repository = new SqliteFrameRepository(context);
-                frameRepository = repository.Just<IFrameRepository>();
-                return repository;
-            });
+    public IFrameRepository Frames =>
+        frameRepository.Value;
 
-    public UnitOfWork(IContextFactory contextFactory) =>
+    public UnitOfWork(IContextFactory contextFactory)
+    {
         context = contextFactory.Create();
+        userRepository = new Lazy<IUserRepository>(() => new SqliteUserRepository(context));
+        frameRepository = new Lazy<IFrameRepository>(() => new SqliteFrameRepository(context));
+    }
 
     public Task Save() =>
         context.Commit();

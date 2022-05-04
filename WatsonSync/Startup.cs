@@ -8,9 +8,6 @@ namespace WatsonSync;
 
 public sealed class Startup
 {
-    private static readonly string DatabasePath =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "watson-sync.sqlite");
-
     public static void ConfigureServices(IServiceCollection services)
     {
         SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
@@ -18,7 +15,9 @@ public sealed class Startup
         SqlMapper.AddTypeHandler(new TimeSpanHandler());
 
         services
-            .AddScoped<IContextFactory>(_ => new SqliteContextFactory($"Data Source={DatabasePath}; Pooling=false"))
+            .AddScoped<IContextFactory>(provider =>
+                new SqliteContextFactory(
+                    provider.GetService<IConfiguration>().GetConnectionString("Default")))
             .AddScoped<IDatabase, SqliteDatabase>()
             .AddHttpLogging(options =>
             {

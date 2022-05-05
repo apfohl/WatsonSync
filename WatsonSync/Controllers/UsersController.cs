@@ -33,7 +33,7 @@ public sealed class UsersController : ApiController
         await unitOfWork.Save();
 
         return result.Match<IActionResult>(
-            response => Created(string.Empty, response),
+            _ => Created(string.Empty, null),
             () => StatusCode(500));
     }
 
@@ -51,6 +51,7 @@ public sealed class UsersController : ApiController
 
     [AllowAnonymous]
     [HttpPost]
+    [Route("verify")]
     public async Task<IActionResult> Verify([FromBody] UserVerification userVerification)
     {
         using var unitOfWork = database.StartUnitOfWork();
@@ -63,7 +64,8 @@ public sealed class UsersController : ApiController
                 if (!u.IsVerified && u.VerificationToken == userVerification.VerificationToken)
                 {
                     await unitOfWork.Users.Verify(u.Email);
-                    return Ok();
+                    var token = await unitOfWork.Users.CreateToken(u);
+                    return Created(string.Empty, new { Token = token.Value });
                 }
 
                 return new UnauthorizedResult();

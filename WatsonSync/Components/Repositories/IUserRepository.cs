@@ -9,4 +9,5 @@ public interface IUserRepository
     Task<Maybe<VerificationToken>> Create(string email);
     Task Delete(User user);
     Task Verify(string email);
+    Task<Token> CreateToken(User user);
 }

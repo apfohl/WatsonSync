@@ -25,6 +25,9 @@ public sealed class Context : IDisposable
     public Task<T> QuerySingle<T>(string query, object parameter = null) =>
         connection.QuerySingleAsync<T>(query, parameter, transaction);
 
+    public Task<T> QuerySingleOrDefault<T>(string query, object parameter = null) =>
+        connection.QuerySingleOrDefaultAsync<T>(query, parameter, transaction);
+
     public Task Commit() =>
         transaction.CommitAsync();
 

@@ -14,7 +14,7 @@ public sealed class SqliteUserRepository : IUserRepository
         this.context = context;
 
     public async Task<Maybe<User>> FindByEmail(string email) =>
-        (await context.QuerySingle<User>(
+        (await context.QuerySingleOrDefault<User>(
             "SELECT id AS Id, email AS Email, token AS Token, verification_token AS VerificationToken, is_verified AS IsVerified FROM users WHERE email is @Email",
             new { Email = email }))
         .ToMaybe();
@@ -28,9 +28,9 @@ public sealed class SqliteUserRepository : IUserRepository
 
         await context.Execute(
             "INSERT INTO users (id, email, verification_token, is_verified) VALUES (@Id, @Email, @VerificationToken, @IsVerified)",
-            new { Id = nextId, Email = email, VerificationToken = token, IsVerified = false });
+            new { Id = nextId, Email = email, VerificationToken = token.Value, IsVerified = false });
 
-        return new VerificationToken(token);
+        return new VerificationToken(token.Value);
     }
 
     public Task Delete(User user) =>
@@ -40,9 +40,20 @@ public sealed class SqliteUserRepository : IUserRepository
         await context.Execute("UPDATE users SET is_verified = @IsVerified WHERE email is @Email",
             new { IsVerified = true, Email = email });
 
+    public async Task<Token> CreateToken(User user)
+    {
+        var token = CreateToken();
+
+        await context.Execute(
+            "UPDATE users SET token = @Token WHERE id IS @Id",
+            new { Token = token.Value, user.Id });
+
+        return token;
+    }
+
     private async Task<int?> LastId() =>
         await context.QuerySingle<int?>("SELECT max(id) FROM users");
 
-    private static string CreateToken() =>
-        Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
+    private static Token CreateToken() =>
+        new(Convert.ToHexString(RandomNumberGenerator.GetBytes(16)));
 }

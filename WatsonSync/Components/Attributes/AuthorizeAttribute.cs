@@ -17,7 +17,13 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
         
         var user = ((User)context.HttpContext.Items["User"]).ToMaybe();
         user.Match(
-            _ => { },
+            u =>
+            {
+                if (!u.IsVerified)
+                {
+                    context.Result = new UnauthorizedResult();
+                }
+            },
             () => context.Result = new UnauthorizedResult());
     }
 }

@@ -7,7 +7,7 @@ namespace WatsonSync.Controllers;
 
 [Authorize]
 [Route("frames")]
-public sealed class FramesController : BaseController
+public sealed class FramesController : ApiController
 {
     private readonly IDatabase database;
     // private static readonly ILog Logger = LogManager.GetLogger(typeof(FramesController));

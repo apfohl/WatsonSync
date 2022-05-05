@@ -12,7 +12,7 @@ using static Functional;
 
 [Authorize]
 [Route("users")]
-public sealed class UsersController : BaseController
+public sealed class UsersController : ApiController
 {
     private readonly IDatabase database;
 
@@ -21,14 +21,14 @@ public sealed class UsersController : BaseController
 
     [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] NewUserRequest newUserRequest)
+    public async Task<IActionResult> Create([FromBody] NewUser newUser)
     {
         using var unitOfWork = database.StartUnitOfWork();
 
         var result = await (
-            from emailAddress in ValidateEmailAddress(newUserRequest.Email).AsTask()
-            from user in unitOfWork.Users.Create(emailAddress)
-            select new NewUserResponse(user.Token));
+            from emailAddress in ValidateEmailAddress(newUser.Email).AsTask()
+            from verificationToken in unitOfWork.Users.Create(emailAddress)
+            select new UserCreated(verificationToken.Value));
 
         await unitOfWork.Save();
 
@@ -47,6 +47,32 @@ public sealed class UsersController : BaseController
         await unitOfWork.Save();
 
         return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    public async Task<IActionResult> Verify([FromBody] UserVerification userVerification)
+    {
+        using var unitOfWork = database.StartUnitOfWork();
+
+        var user = await unitOfWork.Users.FindByEmail(userVerification.Email);
+
+        var response = await user.Match(
+            async u =>
+            {
+                if (!u.IsVerified && u.VerificationToken == userVerification.VerificationToken)
+                {
+                    await unitOfWork.Users.Verify(u.Email);
+                    return Ok();
+                }
+
+                return new UnauthorizedResult();
+            },
+            () => Task.FromResult((IActionResult)NotFound()));
+
+        await unitOfWork.Save();
+
+        return response;
     }
 
     private static Maybe<string> ValidateEmailAddress(string emailAddress) =>

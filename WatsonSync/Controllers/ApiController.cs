@@ -3,7 +3,7 @@ using WatsonSync.Models;
 
 namespace WatsonSync.Controllers;
 
-public abstract class BaseController : Controller
+public abstract class ApiController : Controller
 {
     protected User CurrentUser => (User)HttpContext.Items["User"];
 }

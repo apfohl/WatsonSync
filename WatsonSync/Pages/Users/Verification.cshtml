@@ -1,0 +1,26 @@
+@page
+@model WatsonSync.Pages.Users.Verification
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Verification</title>
+</head>
+<body>
+<div>
+    <h1>User Verification</h1>
+
+    <form method="post">
+        <input type="hidden" asp-for="Email"/>
+        <input type="hidden" asp-for="VerificationToken"/>
+        <input type="submit"/>
+    </form>
+</div>
+</body>
+</html>

@@ -4,6 +4,8 @@ using MonadicBits;
 using WatsonSync.Components.Attributes;
 using WatsonSync.Components.DataAccess;
 using WatsonSync.Components.Extensions;
+using WatsonSync.Components.Mailing;
+using WatsonSync.Components.Verification;
 using WatsonSync.Models;
 
 namespace WatsonSync.Controllers;
@@ -15,9 +17,15 @@ using static Functional;
 public sealed class UsersController : ApiController
 {
     private readonly IDatabase database;
+    private readonly UserVerifier userVerifier;
+    private readonly IMailer mailer;
 
-    public UsersController(IDatabase database) =>
+    public UsersController(IDatabase database, UserVerifier userVerifier, IMailer mailer)
+    {
         this.database = database;
+        this.userVerifier = userVerifier;
+        this.mailer = mailer;
+    }
 
     [AllowAnonymous]
     [HttpPost]
@@ -28,13 +36,21 @@ public sealed class UsersController : ApiController
         var result = await (
             from emailAddress in ValidateEmailAddress(newUser.Email).AsTask()
             from verificationToken in unitOfWork.Users.Create(emailAddress)
-            select new UserCreated(verificationToken.Value));
+            select (Email: emailAddress, VerificationToken: verificationToken.Value));
 
         await unitOfWork.Save();
 
-        return result.Match<IActionResult>(
-            _ => Created(string.Empty, null),
-            () => StatusCode(500));
+        return await result.Match<Task<IActionResult>>(
+            async r =>
+            {
+                await mailer.Send(
+                    "Activation required",
+                    "Please follow the link to activate your account: https://localhost:5246/users/verification" +
+                    $"?email={r.Email}&verificationToken={r.VerificationToken}");
+
+                return Created(string.Empty, null);
+            },
+            () => StatusCode(500).AsTask<IActionResult>());
     }
 
     [HttpDelete]
@@ -52,30 +68,16 @@ public sealed class UsersController : ApiController
     [AllowAnonymous]
     [HttpPost]
     [Route("verify")]
-    public async Task<IActionResult> Verify([FromBody] UserVerification userVerification)
-    {
-        using var unitOfWork = database.StartUnitOfWork();
-
-        var user = await unitOfWork.Users.FindByEmail(userVerification.Email);
-
-        var response = await user.Match(
-            async u =>
+    public async Task<IActionResult> Verify([FromBody] UserVerification userVerification) =>
+        (await userVerifier.Verify(userVerification))
+        .Match(
+            error => error switch
             {
-                if (!u.IsVerified && u.VerificationToken == userVerification.VerificationToken)
-                {
-                    await unitOfWork.Users.Verify(u.Email);
-                    var token = await unitOfWork.Users.CreateToken(u);
-                    return Created(string.Empty, new { Token = token.Value });
-                }
-
-                return new UnauthorizedResult();
+                VerificationError.NotFound => NotFound(),
+                VerificationError.Unauthorized => (IActionResult)Unauthorized(),
+                _ => throw new ArgumentOutOfRangeException(nameof(error), error, null)
             },
-            () => Task.FromResult((IActionResult)NotFound()));
-
-        await unitOfWork.Save();
-
-        return response;
-    }
+            token => new CreatedResult(string.Empty, token));
 
     private static Maybe<string> ValidateEmailAddress(string emailAddress) =>
         MailAddress.TryCreate(emailAddress, out var result) ? result.Address : Nothing;

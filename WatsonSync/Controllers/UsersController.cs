@@ -5,6 +5,7 @@ using WatsonSync.Components.Attributes;
 using WatsonSync.Components.DataAccess;
 using WatsonSync.Components.Extensions;
 using WatsonSync.Components.Mailing;
+using WatsonSync.Components.Validation;
 using WatsonSync.Components.Verification;
 using WatsonSync.Models;
 
@@ -34,7 +35,7 @@ public sealed class UsersController : ApiController
         using var unitOfWork = database.StartUnitOfWork();
 
         var result = await (
-            from emailAddress in ValidateEmailAddress(newUser.Email).AsTask()
+            from emailAddress in PropertyValidation.ValidateEmailAddress(newUser.Email).AsTask()
             from verificationToken in unitOfWork.Users.Create(emailAddress)
             select (Email: emailAddress, VerificationToken: verificationToken.Value));
 
@@ -78,7 +79,4 @@ public sealed class UsersController : ApiController
                 _ => throw new ArgumentOutOfRangeException(nameof(error), error, null)
             },
             token => new CreatedResult(string.Empty, token));
-
-    private static Maybe<string> ValidateEmailAddress(string emailAddress) =>
-        MailAddress.TryCreate(emailAddress, out var result) ? result.Address : Nothing;
 }

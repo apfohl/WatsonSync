@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MonadicBits;
+using WatsonSync.Components.Validation;
 using WatsonSync.Components.Verification;
 using WatsonSync.Models;
 
@@ -16,12 +18,18 @@ public sealed class Verification : PageModel
     public Verification(UserVerifier userVerifier) =>
         this.userVerifier = userVerifier;
 
-    public void OnGet(string email, string verificationToken)
-    {
-        Email = email;
-        VerificationToken = verificationToken;
-    }
-    
+    public void OnGet(string email, string verificationToken) =>
+        (from emailAddress in PropertyValidation.ValidateEmailAddress(email)
+            from token in PropertyValidation.ValidateToken(verificationToken)
+            select (emailAddress, token))
+        .Match(
+            tuple =>
+            {
+                Email = tuple.emailAddress;
+                VerificationToken = tuple.token;
+            },
+            () => { });
+
     public async Task<IActionResult> OnPostAsync() =>
         (await userVerifier.Verify(new UserVerification(Email, VerificationToken)))
         .Match(

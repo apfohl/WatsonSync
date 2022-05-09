@@ -10,7 +10,6 @@ namespace WatsonSync.Controllers;
 public sealed class FramesController : ApiController
 {
     private readonly IDatabase database;
-    // private static readonly ILog Logger = LogManager.GetLogger(typeof(FramesController));
 
     public FramesController(IDatabase database) => 
         this.database = database;

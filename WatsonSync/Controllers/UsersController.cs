@@ -1,4 +1,3 @@
-using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using MonadicBits;
 using WatsonSync.Components.Attributes;
@@ -11,8 +10,6 @@ using WatsonSync.Models;
 
 namespace WatsonSync.Controllers;
 
-using static Functional;
-
 [Authorize]
 [Route("users")]
 public sealed class UsersController : ApiController
@@ -20,7 +17,7 @@ public sealed class UsersController : ApiController
     private readonly IDatabase database;
     private readonly UserVerifier userVerifier;
     private readonly IMailer mailer;
-
+    
     public UsersController(IDatabase database, UserVerifier userVerifier, IMailer mailer)
     {
         this.database = database;
@@ -46,7 +43,7 @@ public sealed class UsersController : ApiController
             {
                 await mailer.Send(
                     "Activation required",
-                    "Please follow the link to activate your account: https://localhost:5246/users/verification" +
+                    "Please follow the link to activate your account: http://localhost:5246/users/verification" +
                     $"?email={r.Email}&verificationToken={r.VerificationToken}");
 
                 return Created(string.Empty, null);

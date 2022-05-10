@@ -39,5 +39,5 @@ public sealed class Verification : PageModel
                 VerificationError.Unauthorized => (IActionResult)Unauthorized(),
                 _ => throw new ArgumentOutOfRangeException(nameof(error), error, null)
             },
-            token => new CreatedResult(string.Empty, token));
+            token => RedirectToPage(nameof(Verified), token));
 }

@@ -5,14 +5,8 @@ namespace WatsonSync.Components.DataAccess;
 public sealed class UnitOfWork : IDisposable
 {
     private readonly Context context;
-    private readonly Lazy<IUserRepository> userRepository;
     private readonly Lazy<IFrameRepository> frameRepository;
-
-    public IUserRepository Users =>
-        userRepository.Value;
-
-    public IFrameRepository Frames =>
-        frameRepository.Value;
+    private readonly Lazy<IUserRepository> userRepository;
 
     public UnitOfWork(IContextFactory contextFactory)
     {
@@ -21,9 +15,15 @@ public sealed class UnitOfWork : IDisposable
         frameRepository = new Lazy<IFrameRepository>(() => new SqliteFrameRepository(context));
     }
 
-    public Task Save() =>
-        context.Commit();
+    public IUserRepository Users =>
+        userRepository.Value;
+
+    public IFrameRepository Frames =>
+        frameRepository.Value;
 
     public void Dispose() =>
         context.Dispose();
+
+    public Task Save() =>
+        context.Commit();
 }

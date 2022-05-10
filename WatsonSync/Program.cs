@@ -6,6 +6,7 @@ using WatsonSync.Components.DataAccess;
 using WatsonSync.Components.Mailing;
 using WatsonSync.Components.Verification;
 using WatsonSync.Models;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 var log = LogManager
     .Setup()
@@ -23,7 +24,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Logging.ClearProviders();
-    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+    builder.Logging.SetMinimumLevel(LogLevel.Trace);
     builder.Host.UseNLog();
 
     builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));

@@ -14,7 +14,7 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
         {
             return;
         }
-        
+
         var user = ((User)context.HttpContext.Items["User"]).ToMaybe();
         user.Match(
             u =>

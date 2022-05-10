@@ -23,7 +23,7 @@ public sealed class SqliteContextFactory : IContextFactory
     {
         var connection = new SqliteConnection(connectionString);
         connection.Open();
-        
+
         return new ReadOnlyContext(connection);
     }
 }

@@ -11,18 +11,18 @@ public sealed class FramesController : ApiController
 {
     private readonly IDatabase database;
 
-    public FramesController(IDatabase database) => 
+    public FramesController(IDatabase database) =>
         this.database = database;
 
     [HttpGet]
     public async Task<IActionResult> Frames([FromQuery(Name = "last_sync")] DateTime since)
     {
         using var unitOfWork = database.StartUnitOfWork();
-        
+
         var result = since == default
             ? await unitOfWork.Frames.QueryAll(CurrentUser)
             : await unitOfWork.Frames.QuerySince(CurrentUser, since);
-        
+
         await unitOfWork.Save();
 
         return Ok(result);
@@ -33,11 +33,11 @@ public sealed class FramesController : ApiController
     public async Task<IActionResult> CreateFrames([FromBody] IEnumerable<Frame> frames)
     {
         using var unitOfWork = database.StartUnitOfWork();
-        
+
         await unitOfWork.Frames.Insert(CurrentUser, frames);
-        
+
         await unitOfWork.Save();
-        
+
         return CreatedAtAction(nameof(Frames), null);
     }
 }

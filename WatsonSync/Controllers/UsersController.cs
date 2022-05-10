@@ -15,9 +15,9 @@ namespace WatsonSync.Controllers;
 public sealed class UsersController : ApiController
 {
     private readonly IDatabase database;
-    private readonly UserVerifier userVerifier;
     private readonly IMailer mailer;
-    
+    private readonly UserVerifier userVerifier;
+
     public UsersController(IDatabase database, UserVerifier userVerifier, IMailer mailer)
     {
         this.database = database;

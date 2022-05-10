@@ -13,4 +13,7 @@ public static class FunctionalExtensions
 
     public static Maybe<string> ToMaybe(this StringValues value) =>
         value.Count == 0 ? Nothing : value.ToString();
+
+    public static Maybe<T> NoThing<T>() =>
+        Nothing;
 }

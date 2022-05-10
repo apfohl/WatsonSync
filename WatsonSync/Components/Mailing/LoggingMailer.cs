@@ -1,14 +1,17 @@
+using MonadicBits;
 using NLog;
 
 namespace WatsonSync.Components.Mailing;
+
+using static Functional;
 
 public class LoggingMailer : IMailer
 {
     private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-    public Task Send(string subject, string message)
+    public Task<Maybe<MailError>> Send(string to, string subject, string message)
     { 
-        Log.Info($"NEW EMAIL\nSubject: {subject}\nMesssage: {message}");
-        return Task.CompletedTask;
+        Log.Info($"NEW EMAIL\nTo: {to}\nSubject: {subject}\nMesssage: {message}");
+        return Task.FromResult<Maybe<MailError>>(Nothing);
     }
 }

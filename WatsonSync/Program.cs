@@ -5,6 +5,7 @@ using WatsonSync.Components.Authentication;
 using WatsonSync.Components.DataAccess;
 using WatsonSync.Components.Mailing;
 using WatsonSync.Components.Verification;
+using WatsonSync.Models;
 
 var log = LogManager
     .Setup()
@@ -25,6 +26,7 @@ try
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
 
+    builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
     builder.Services.AddScoped<IContextFactory>(provider =>
         new SqliteContextFactory(
             provider.GetService<IConfiguration>().GetConnectionString("Default")));
@@ -39,7 +41,7 @@ try
     {
         builder.Services.AddTransient<IMailer, PostmarkMailer>();
     }
-    
+
     builder.Services.AddControllers();
     builder.Services.AddRazorPages();
 

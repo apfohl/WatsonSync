@@ -1,6 +1,8 @@
+using MonadicBits;
+
 namespace WatsonSync.Components.Mailing;
 
 public interface IMailer
 {
-    Task Send(string subject, string message);
+    Task<Maybe<MailError>> Send(string to, string subject, string message);
 }

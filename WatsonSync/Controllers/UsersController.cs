@@ -42,6 +42,7 @@ public sealed class UsersController : ApiController
             async r =>
             {
                 await mailer.Send(
+                    r.Email,
                     "Activation required",
                     "Please follow the link to activate your account: http://localhost:5246/users/verification" +
                     $"?email={r.Email}&verificationToken={r.VerificationToken}");

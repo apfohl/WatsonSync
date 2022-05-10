@@ -9,7 +9,8 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "CONNECTIONSTRINGS__DEFAULT": "Data Source=/home/andreas/Documents/watson-sync.sqlite; Pooling=false",
         "MAILSETTINGS__POSTMARKAPIKEY": "xyz",
-        "MAILSETTINGS__FROM": "watson-sync@example.com"
+        "MAILSETTINGS__FROM": "watson-sync@example.com",
+        "MAILSETTINGS__APPLICATIONURL": "http://localhost:5246"
       }
     }
   }

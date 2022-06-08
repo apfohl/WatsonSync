@@ -1,6 +1,6 @@
 namespace WatsonSync.Models;
 
-public record MailSettings
+public sealed record MailSettings
 {
     public string PostmarkApiKey { get; set; }
     public string From { get; set; }

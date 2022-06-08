@@ -28,6 +28,7 @@ try
     builder.Host.UseNLog();
 
     builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+    builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
     builder.Services.AddScoped<IContextFactory>(provider =>
         new SqliteContextFactory(
             provider.GetService<IConfiguration>().GetConnectionString("Default")));

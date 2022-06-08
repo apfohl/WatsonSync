@@ -2,8 +2,8 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
 WORKDIR /source
 
 COPY *.sln .
-COPY WatsonSync/*.csproj ./WatsonSync/
-RUN dotnet restore -r linux-musl-x64 /p:PublishReadyToRun=true
+COPY WatsonSync/WatsonSync.csproj ./WatsonSync/
+RUN dotnet restore -r linux-musl-x64 /p:PublishReadyToRun=true WatsonSync/WatsonSync.csproj
 
 COPY WatsonSync/. ./WatsonSync/
 WORKDIR /source/WatsonSync

@@ -31,14 +31,14 @@ public sealed class SqliteFrameRepository : IFrameRepository
             "tags",
             new { UserId = user.Id, Since = since });
 
-    public async Task Insert(User user, IEnumerable<Frame> frames)
+    public async Task InsertOrReplace(User user, IEnumerable<Frame> frames)
     {
         foreach (var frame in frames)
         {
             var tags = string.Join(',', frame.Tags);
 
             await context.Execute(
-                "INSERT INTO frames (id, begin_at, end_at, project, user_id, tags) VALUES (@Id, @BeginAt, @EndAt, @Project, @UserId, @Tags)",
+                "INSERT OR REPLACE INTO frames (id, begin_at, end_at, project, user_id, tags) VALUES (@Id, @BeginAt, @EndAt, @Project, @UserId, @Tags)",
                 new { frame.Id, frame.BeginAt, frame.EndAt, frame.Project, UserId = user.Id, Tags = tags });
         }
     }

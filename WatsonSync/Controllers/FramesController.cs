@@ -34,7 +34,7 @@ public sealed class FramesController : ApiController
     {
         using var unitOfWork = database.StartUnitOfWork();
 
-        await unitOfWork.Frames.Insert(CurrentUser, frames);
+        await unitOfWork.Frames.InsertOrReplace(CurrentUser, frames);
 
         await unitOfWork.Save();
 

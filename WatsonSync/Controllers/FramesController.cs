@@ -15,13 +15,11 @@ public sealed class FramesController : ApiController
         this.database = database;
 
     [HttpGet]
-    public async Task<IActionResult> Frames([FromQuery(Name = "last_sync")] DateTime since)
+    public async Task<IActionResult> Frames([FromQuery(Name = "last_sync")] DateTime since = default)
     {
         using var unitOfWork = database.StartUnitOfWork();
 
-        var result = since == default
-            ? await unitOfWork.Frames.QueryAll(CurrentUser)
-            : await unitOfWork.Frames.QuerySince(CurrentUser, since);
+        var result = await unitOfWork.Frames.QuerySince(CurrentUser, since);
 
         await unitOfWork.Save();
 

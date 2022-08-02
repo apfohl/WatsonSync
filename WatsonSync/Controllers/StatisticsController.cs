@@ -26,13 +26,14 @@ public sealed class StatisticsController : ApiController
         using var unitOfWork = database.StartUnitOfWork();
 
         var frames =
-            (await unitOfWork.Frames.QueryAll(CurrentUser))
+            (await unitOfWork.Frames.QuerySince(CurrentUser, default))
             .Where(frame => frame.Project != options.Value.HolidayIdentifier);
 
         await unitOfWork.Save();
 
         var aggregateDailyHours = WorkTimeBalance.AggregateDailyHours(frames);
         var balance = WorkTimeBalance.CalculateBalance(7d, aggregateDailyHours);
+
         return Ok(new
         {
             balance = new

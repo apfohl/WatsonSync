@@ -10,9 +10,6 @@ public sealed class SqliteFrameRepository : IFrameRepository
     public SqliteFrameRepository(Context context) =>
         this.context = context;
 
-    public Task<IEnumerable<Frame>> QueryAll(User user) =>
-        QuerySince(user, DateTime.MinValue);
-
     public async Task<IEnumerable<Frame>> QuerySince(User user, DateTime since) =>
         await context.Query(
             "SELECT id AS Id, begin_at AS BeginAt, end_at AS EndAt, project AS Project, tags AS Tags FROM frames WHERE user_id IS @UserId AND end_at > @Since",

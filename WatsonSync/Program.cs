@@ -18,6 +18,8 @@ log.Info("init main");
 SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
 SqlMapper.AddTypeHandler(new GuidHandler());
 SqlMapper.AddTypeHandler(new TimeSpanHandler());
+SqlMapper.AddTypeHandler(new UserSettingsHandler());
+SqlMapper.AddTypeHandler(new UserSettingTypesHandler());
 
 try
 {

@@ -29,10 +29,14 @@ public sealed class StatisticsController : ApiController
             (await unitOfWork.Frames.QuerySince(CurrentUser, default))
             .Where(frame => frame.Project != options.Value.HolidayIdentifier);
 
+        var workingDays =
+            (await unitOfWork.UserSettings.WorkingDays(CurrentUser))
+            .Match(d => d, () => 8d);
+
         await unitOfWork.Save();
 
         var aggregateDailyHours = WorkTimeBalance.AggregateDailyHours(frames);
-        var balance = WorkTimeBalance.CalculateBalance(7d, aggregateDailyHours);
+        var balance = WorkTimeBalance.CalculateBalance(workingDays, aggregateDailyHours);
 
         return Ok(new
         {

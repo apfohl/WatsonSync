@@ -20,7 +20,7 @@ public sealed class UserVerifier
 
     public async Task<Either<VerificationError, Token>> Verify(UserVerification userVerification)
     {
-        using var unitOfWork = database.StartUnitOfWork();
+        await using var unitOfWork = database.StartUnitOfWork();
 
         var user = await unitOfWork.Users.FindByEmail(userVerification.Email);
 

@@ -33,7 +33,7 @@ public sealed class UsersController : ApiController
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] NewUser newUser)
     {
-        using var unitOfWork = database.StartUnitOfWork();
+        await using var unitOfWork = database.StartUnitOfWork();
 
         var result = await (
             from emailAddress in PropertyValidation.ValidateEmailAddress(newUser.Email).AsTask()
@@ -59,7 +59,7 @@ public sealed class UsersController : ApiController
     [HttpDelete]
     public async Task<IActionResult> Delete()
     {
-        using var unitOfWork = database.StartUnitOfWork();
+        await using var unitOfWork = database.StartUnitOfWork();
 
         await unitOfWork.Users.Delete(CurrentUser);
 

@@ -23,7 +23,7 @@ public sealed class StatisticsController : ApiController
     [HttpGet]
     public async Task<IActionResult> Statistics()
     {
-        using var unitOfWork = database.StartUnitOfWork();
+        await using var unitOfWork = database.StartUnitOfWork();
 
         var frames =
             (await unitOfWork.Frames.QuerySince(CurrentUser, default))

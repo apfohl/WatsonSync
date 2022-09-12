@@ -2,7 +2,7 @@ using WatsonSync.Components.Repositories;
 
 namespace WatsonSync.Components.DataAccess;
 
-public sealed class UnitOfWork : IDisposable
+public sealed class UnitOfWork : IDisposable, IAsyncDisposable
 {
     private readonly Context context;
     private readonly Lazy<IFrameRepository> frameRepository;
@@ -26,4 +26,10 @@ public sealed class UnitOfWork : IDisposable
 
     public Task Save() =>
         context.Commit();
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
+    }
 }

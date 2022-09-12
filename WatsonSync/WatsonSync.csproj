@@ -11,9 +11,9 @@
         <PackageReference Include="bridgefield.MonadicBits" Version="0.4.1" />
         <PackageReference Include="Dapper" Version="2.0.123" />
         <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
-        <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.7" />
-        <PackageReference Include="NLog" Version="5.0.1" />
-        <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.0" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.8" />
+        <PackageReference Include="NLog" Version="5.0.4" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.4" />
         <PackageReference Include="Postmark" Version="4.7.2" />
     </ItemGroup>
 

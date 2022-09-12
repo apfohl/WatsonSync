@@ -17,7 +17,7 @@ public sealed class FramesController : ApiController
     [HttpGet]
     public async Task<IActionResult> Frames([FromQuery(Name = "last_sync")] DateTime since = default)
     {
-        using var unitOfWork = database.StartUnitOfWork();
+        await using var unitOfWork = database.StartUnitOfWork();
 
         var result = await unitOfWork.Frames.QuerySince(CurrentUser, since);
 
@@ -30,7 +30,7 @@ public sealed class FramesController : ApiController
     [Route("bulk")]
     public async Task<IActionResult> CreateFrames([FromBody] IEnumerable<Frame> frames)
     {
-        using var unitOfWork = database.StartUnitOfWork();
+        await using var unitOfWork = database.StartUnitOfWork();
 
         await unitOfWork.Frames.InsertOrReplace(CurrentUser, frames);
 

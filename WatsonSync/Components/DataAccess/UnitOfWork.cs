@@ -1,3 +1,4 @@
+using WatsonSync.Components.EventStore;
 using WatsonSync.Components.Repositories;
 
 namespace WatsonSync.Components.DataAccess;
@@ -8,6 +9,7 @@ public sealed class UnitOfWork : IDisposable, IAsyncDisposable
     private readonly Lazy<IFrameRepository> frameRepository;
     private readonly Lazy<IUserRepository> userRepository;
     private readonly Lazy<IUserSettingsRepository> userSettingsRepository;
+    private readonly Lazy<IEventStore> eventStore;
 
     public UnitOfWork(IContextFactory contextFactory)
     {
@@ -15,6 +17,7 @@ public sealed class UnitOfWork : IDisposable, IAsyncDisposable
         userRepository = new Lazy<IUserRepository>(() => new SqliteUserRepository(context));
         frameRepository = new Lazy<IFrameRepository>(() => new SqliteFrameRepository(context));
         userSettingsRepository = new Lazy<IUserSettingsRepository>(() => new SqliteUserSettingsRepository(context));
+        eventStore = new Lazy<IEventStore>(() => new SqliteEventStore(context));
     }
 
     public IUserRepository Users =>
@@ -25,6 +28,9 @@ public sealed class UnitOfWork : IDisposable, IAsyncDisposable
 
     public IUserSettingsRepository UserSettings =>
         userSettingsRepository.Value;
+
+    public IEventStore Events =>
+        eventStore.Value;
 
     public void Dispose() =>
         context.Dispose();

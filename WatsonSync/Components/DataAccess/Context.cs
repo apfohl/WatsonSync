@@ -19,6 +19,9 @@ public sealed class Context : IDisposable
         object parameter = null) =>
         connection.QueryAsync(query, types, map, parameter, transaction, splitOn: splitOn);
 
+    public Task<IEnumerable<T>> Query<T>(string query, object parameter = null) =>
+        connection.QueryAsync<T>(query, parameter, transaction);
+
     public Task<int> Execute(string query, object parameter = null) =>
         connection.ExecuteAsync(query, parameter, transaction);
 
